@@ -8,7 +8,14 @@ const utilisateurSchema = new mongoose.Schema({
     nom: { type: String },
     prenom: { type: String },
     age: { type: Number },
-    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recette' }]
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recette' }],
+    shoppingList: [
+        {
+            ingredientName: { type: String, required: false },
+            quantity: { type: Number, required: false },
+            unit: { type: String, required: false }
+        }
+    ]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Utilisateur', utilisateurSchema);

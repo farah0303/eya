@@ -13,11 +13,11 @@ import {
 import { addIngredient, updateRecipeWithIngredients } from "../../services/apiService"; // Import des services
 
 const Addfood3 = ({ navigation, route }) => {
-  const [ingredients, setIngredients] = useState([{ nom: "", quantite: "", unite: "" },]);
+  const [ingredients, setIngredients] = useState([{ nom: "", quantite: "", unite: "" , calorie: ""},]);
   const [loading, setLoading] = useState(false);
 
   const addIngredientInput = () => {
-    setIngredients([...ingredients,{ nom: "", quantite: "", unite: "" }]);
+    setIngredients([...ingredients,{ nom: "", quantite: "", unite: "" , calorie: ""}]);
   };
 
   const updateIngredientInput = (field, text, index) => {
@@ -34,7 +34,7 @@ const Addfood3 = ({ navigation, route }) => {
       const ingredientIds = [];
       for (const ingredient of ingredients) {
      
-        if (ingredient.nom.trim() && ingredient.quantite.trim() && ingredient.unite.trim()) {
+        if (ingredient.nom.trim() && ingredient.quantite.trim() && ingredient.unite.trim() && ingredient.calorie.trim()) {
           const addedIngredient = await addIngredient({
             nom: ingredient.nom,
           });
@@ -42,6 +42,7 @@ const Addfood3 = ({ navigation, route }) => {
             ingredient: addedIngredient._id,
             quantite: ingredient.quantite,
             unite : ingredient.unite,
+            calorie: ingredient.calorie,
           });
         }
       }
@@ -94,6 +95,13 @@ const Addfood3 = ({ navigation, route }) => {
               placeholder="Enter unit (e.g., kg, ml, ....)"
               value={ingredient.unite}
               onChangeText={(text) => updateIngredientInput("unite", text, index)}
+              placeholderTextColor="#999"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter nb of calories in kcal "
+              value={ingredient.calorie}
+              onChangeText={(text) => updateIngredientInput("calorie", text, index)}
               placeholderTextColor="#999"
             />
           </View>

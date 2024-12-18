@@ -121,16 +121,34 @@ export const getFormulaires = async () => {
 };
 
 // Mettre à jour une recette avec des ingrédients
-export const updateRecipeWithIngredients = async (recipeId, {ingredients}) => {
-    try {
-        const response = await axios.put(`${API_URL}/recettes/${recipeId}`, { ingredients }, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        return response.data; // Retourne la recette mise à jour
-    } catch (error) {
-        console.error('Error updating recipe:', error);}}
+export const updateRecipeWithIngredients = async (recipeId, { ingredients }) => {
+  try {
+      // Calculer la somme des calories de tous les ingrédients
+      const totalCalories = ingredients.reduce((sum, ingredient) => {
+          return sum + (ingredient.calorie || 0); // Si `calorie` est null ou undefined, utiliser 0
+      }, 0);
+      console.log(totalCalories)
+      // Inclure la somme des calories dans la requête
+      const response = await axios.put(
+          `${API_URL}/recettes/${recipeId}`,
+          { 
+              ingredients, 
+              calories: totalCalories // Ajout du champ calories
+          },
+          {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          }
+      );
+      console.log(response);
+      console.log(response.data);
+
+      return response.data; // Retourne la recette mise à jour
+  } catch (error) {
+      console.error('Error updating recipe:', error);
+  }
+};
 // Mettre à jour un formulaire dynamique
 export const updateFormulaire = async (id, formData) => {
     try {
@@ -285,3 +303,25 @@ export const updateFavoriteStatus = async (recipeId, favoriteStatus) => {
       throw error; // Rethrow the error so it can be handled by the caller
     }
   };
+
+  export const addToShoppingList = async (userId, name, quantite, unite) => {
+    try {
+        // Map the incoming parameters to the required API payload fields
+        const response = await axios.post(`${API_URL}/auth/shopping-list/add`, {
+            userId,
+            ingredientName: name, // Map 'name' to 'ingredientName'
+            quantity: quantite,   // Map 'quantite' to 'quantity'
+            unit: unite,          // Map 'unite' to 'unit'
+        });
+
+        console.log("UserId:", userId);
+        console.log("IngredientName:", name);
+        console.log("Quantity:", quantite);
+        console.log("Unit:", unite);
+
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de l'ajout à la liste de courses:", error);
+        throw error;
+    }
+};

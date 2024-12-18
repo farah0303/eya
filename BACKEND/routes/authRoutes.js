@@ -155,3 +155,31 @@ router.get('/favorites/:userId', async (req, res) => {
 
 module.exports = router;
 
+router.post('/shopping-list/add', async (req, res) => {
+  const { userId, ingredientName, quantity, unit } = req.body;
+
+  try {
+      // Find the user by their ID
+      const utilisateur = await User.findById(userId);
+
+      if (!utilisateur) {
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+
+      // Add the ingredient to the user's shopping list
+      utilisateur.shoppingList.push({ ingredientName, quantity, unit });
+      await utilisateur.save();
+
+      // Respond with success and the updated shopping list
+      res.status(200).json({
+          message: "Ingrédient ajouté à la liste de courses",
+          shoppingList: utilisateur.shoppingList,
+      });
+  } catch (error) {
+      // Handle errors during the process
+      res.status(500).json({
+          message: "Erreur lors de l'ajout à la liste de courses",
+          error,
+      });
+  }
+});

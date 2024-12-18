@@ -8,11 +8,12 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
+import { Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getRecetteParId, getIngredientsParId,checkIfFavorite } from "../../services/apiService";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS } from "../../styles/colors"; // Import des couleurs
-import { addFavorite, removeFavorite } from "../../services/apiService";
+import { addFavorite, removeFavorite, addToShoppingList } from "../../services/apiService";
 import { useUser } from "../../services/Usercontext"; 
 
 const ParentComponent = ({ route, navigation }) => {
@@ -51,6 +52,35 @@ const ParentComponent = ({ route, navigation }) => {
   }, [recipeId]);
 console.log(userId)
 console.log (recipeId)
+console.log(ingredientsWithNames)
+
+const addToShoppingCart = async () => {
+  try {
+    for (const ingredient of ingredientsWithNames) {
+      // Find the corresponding ingredient details in the recipe
+      const name = ingredient.name
+      const quantite = ingredient.quantite
+      const unite = ingredient.unite
+      console.log(name,quantite,unite)
+        await addToShoppingList(
+          userId,
+          name,
+          quantite, 
+          unite,
+        );
+    }
+    Alert.alert(
+      "Succès",
+      "Les ingrédients ont été ajoutés à votre liste de courses.",
+      [{ text: "OK" }]
+    );
+    console.log("Ingrédients ajoutés à la liste de courses");
+  } catch (error) {
+    console.error("Erreur lors de l'ajout des ingrédients à la liste de courses:", error);
+  }
+};
+
+
   const toggleFavorite = async () => {
     if (!userId) {
       console.error("Utilisateur non connecté.");
@@ -144,13 +174,17 @@ console.log(isFavorite)
                     style={styles.icon}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={addToShoppingCart}>
                   <AntDesign name="shoppingcart" size={24} color="black" />
-                </TouchableOpacity>
+              </TouchableOpacity>
+
               
               </View>
             </View>
-            <Text style={styles.time}>{recipe.tempsPreparation} min.</Text>
+            <View style={styles.rowContainer}>
+                <Text style={styles.time}>{recipe.tempsPreparation} min.</Text>
+                <Text style={styles.time}>{recipe.calories} kcal</Text>
+            </View>
           </View>
           <Text style={styles.descriptionText}>{recipe.description}</Text>
           {/* Ingredients List */}
@@ -257,10 +291,13 @@ const styles = StyleSheet.create({
   },
   time: {
     color: "#2D958E",
-    marginTop: 4,
+    marginTop: 8,
+    marginBottom:0
   },
   ingredientsList: {
     padding: 16,
+    paddingTop:0,
+    marginTop:0,
   },
   ingredientItem: {
     flexDirection: "row",
@@ -288,6 +325,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  rowContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center", 
+    paddingHorizontal: 1,
+    margin:0,
+    margintop: 5
+},
+
 });
 
 export default ParentComponent;

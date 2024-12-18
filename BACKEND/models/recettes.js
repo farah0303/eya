@@ -14,6 +14,7 @@ const recettesSchema = new mongoose.Schema({
             ingredient: { type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' },
             quantite: { type: Number, required: false },
             unite: { type: String, required: false },
+            calorie: { type: Number, required: false },
         },
     ],
     instructions: [{ type: String }],
