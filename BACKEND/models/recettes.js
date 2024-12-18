@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-
+const trimesterCategories = [1, 2, 3];
 const recettesSchema = new mongoose.Schema({
     categorie: { type: String , required: false },
     image: { type: String, required: false },
@@ -18,6 +18,33 @@ const recettesSchema = new mongoose.Schema({
         },
     ],
     instructions: [{ type: String }],
+    trimester: {
+
+        type: [Number], // Array of strings
+
+        required: true,
+
+        validate: [
+
+            {
+
+                validator: function (categories) {
+
+                    // Ensure all categories are valid
+
+                    return categories.every(cat => 
+trimesterCategories.includes(cat));
+
+                },
+
+                message: props => `${props.value} contains an invalid category. Allowed categories are: ${trimesterCategories.join(', ')}.`
+
+            }
+
+        ]
+
+    },
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Recette', recettesSchema);
