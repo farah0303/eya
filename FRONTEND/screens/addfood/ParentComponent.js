@@ -147,6 +147,7 @@ console.log(isFavorite)
                 <TouchableOpacity>
                   <AntDesign name="shoppingcart" size={24} color="black" />
                 </TouchableOpacity>
+              
               </View>
             </View>
             <Text style={styles.time}>{recipe.tempsPreparation} min.</Text>
